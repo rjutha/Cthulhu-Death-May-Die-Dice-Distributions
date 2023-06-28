@@ -10,6 +10,7 @@
 library(shiny)
 library(highcharter)
 library(tidyverse)
+library(scales)
 source("cthulhu dice.R")
 
 # Define UI for application that draws a histogram
@@ -30,30 +31,15 @@ ui <- fluidPage(
                          selected = 10000),
             selectInput(inputId = "black",
                         label = "Number of black dice to roll",
-                        choices = c(0,
-                                    1,
-                                    2,
-                                    3,
-                                    4,
-                                    5,
-                                    6,
-                                    7,
-                                    8,
-                                    9),
+                        choices = c(0:9),
                         selected = 3),
             selectInput(inputId = "green",
                         label = "Number of green dice to roll",
-                        choices = c(0,
-                                    1,
-                                    2,
-                                    3,
-                                    4,
-                                    5,
-                                    6,
-                                    7,
-                                    8,
-                                    9),
+                        choices = c(0:9),
                         selected = 0),
+          radioButtons("var", "Probability or Frequency?",
+                       c("probability" = "dist",
+                         "frequency" = "count")),
           sliderInput("success", "Number of Successes",
                       min = 0, 
                       max = 9,
@@ -71,9 +57,8 @@ ui <- fluidPage(
 
         # Show a plot of the generated distribution
         mainPanel(
-          highchartOutput("hc_plot")
-           # plotOutput("distPlot")
-          
+          highchartOutput("hc_plot"),
+          textOutput("text")
         )
     )
 )
@@ -104,20 +89,45 @@ rerun_data <- reactive({
 
   output$hc_plot <- renderHighchart({
     df <- rerun_data()
-    hchart(df,
-           "column",
-           hcaes(x = (1:length(dist)), y = dist),
-           color = "#478A54") %>%
+    
+    df %>%
+      filter(
+        between(success, input$success[1], input$success[2]),
+        between(star, input$stars[1], input$stars[2]),
+        between(tentacle, input$tentacles[1], input$tentacles[2])) %>%
+      mutate(
+        percent_label = percent(dist, accuracy = 0.01, scale = 100)) %>%
+      hchart("column",
+           hcaes(x = (1:length(dist)), y = !!as.symbol(input$var)),
+            color = "#478A54",
+           tooltip = list(
+             pointFormat = 
+             "Number of Success: {point.success}<br>
+             Number of Stars: {point.star}<br>
+             Number of Tentacles: {point.tentacle}<br>
+             Prob = {point.percent_label}")) %>%
       hc_plotOptions(
         column = list(
           pointPadding = 0,
           borderWidth = 0,
           groupPadding = 0,
           shadow = FALSE
-        )
+         )
       )
   })
-
+  output$text <- renderText({
+    df <- rerun_data()
+    
+    filtered_df <- 
+      df %>%
+      filter(
+        between(success, input$success[1], input$success[2]),
+        between(star, input$stars[1], input$stars[2]),
+        between(tentacle, input$tentacles[1], input$tentacles[2]))
+    
+    paste0("The probabiilty of obtaining this set is ", 
+           filtered_df %>% pull() %>% sum() %>% percent(accuracy = 0.01, scale = 100))
+  })
 }
 
 # Run the application 
