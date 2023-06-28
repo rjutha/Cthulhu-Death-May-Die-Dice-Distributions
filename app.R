@@ -53,7 +53,19 @@ ui <- fluidPage(
                                     7,
                                     8,
                                     9),
-                        selected = 0)
+                        selected = 0),
+          sliderInput("success", "Number of Successes",
+                      min = 0, 
+                      max = 9,
+                      value = c(0,9)),
+          sliderInput("stars", "Number of Stars",
+                      min = 0, 
+                      max = 9,
+                      value = c(0,9)),
+          sliderInput("tentacles", "Number of Tentacles",
+                      min = 0, 
+                      max = 9,
+                      value = c(0,9))
         ),
         
 
