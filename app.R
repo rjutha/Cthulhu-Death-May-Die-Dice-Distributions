@@ -17,7 +17,7 @@ source("cthulhu dice.R")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-    themeSelector(),
+    theme = shinytheme("darkly"),
     # Application title
     titlePanel("Cthulhu Death May Die Dice Distribution"),
 
