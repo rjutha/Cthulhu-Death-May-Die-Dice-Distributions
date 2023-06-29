@@ -11,11 +11,12 @@ library(shiny)
 library(highcharter)
 library(tidyverse)
 library(scales)
+library(bslib)
 source("cthulhu dice.R")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-
+    theme = bslib::bs_theme(bootswatch = "darkly"),
     # Application title
     titlePanel("Cthulhu Death May Die Dice Distribution"),
 
@@ -38,7 +39,7 @@ ui <- fluidPage(
                         choices = c(0:9),
                         selected = 0),
           radioButtons("var", "Probability or Frequency?",
-                       c("probability" = "dist",
+                       c("probability" = "percent",
                          "frequency" = "count")),
           sliderInput("success", "Number of Successes",
                       min = 0, 
@@ -96,6 +97,7 @@ rerun_data <- reactive({
         between(star, input$stars[1], input$stars[2]),
         between(tentacle, input$tentacles[1], input$tentacles[2])) %>%
       mutate(
+        percent = dist * 100,
         percent_label = percent(dist, accuracy = 0.01, scale = 100)) %>%
       hchart("column",
            hcaes(x = (1:length(dist)), y = !!as.symbol(input$var)),
@@ -112,9 +114,16 @@ rerun_data <- reactive({
           borderWidth = 0,
           groupPadding = 0,
           shadow = FALSE
+          #,crisp = FALSE # Come back to fix this
          )
-      )
+      ) %>%
+      hc_yAxis(
+        title = list(text = "Probability"),
+        labels = list(format = ifelse(input$var == 'percent', "{value}%", "{value}"))) %>%
+      hc_xAxis(
+        title = list(text = "Roll Outcomes"))
   })
+  
   output$text <- renderText({
     df <- rerun_data()
     
