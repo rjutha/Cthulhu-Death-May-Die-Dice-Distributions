@@ -12,11 +12,12 @@ library(highcharter)
 library(tidyverse)
 library(scales)
 library(bslib)
+library(shinythemes)
 source("cthulhu dice.R")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-    theme = bslib::bs_theme(bootswatch = "darkly"),
+    themeSelector(),
     # Application title
     titlePanel("Cthulhu Death May Die Dice Distribution"),
 
@@ -118,10 +119,12 @@ rerun_data <- reactive({
          )
       ) %>%
       hc_yAxis(
-        title = list(text = "Probability"),
-        labels = list(format = ifelse(input$var == 'percent', "{value}%", "{value}"))) %>%
+        title = list(text = "", style = list(color = 'white')),
+        labels = list(format = ifelse(input$var == 'percent', "{value}%", "{value}"),
+                      style = list(color = 'white'))) %>%
       hc_xAxis(
-        title = list(text = "Roll Outcomes"))
+        title = list(text = "Roll Outcomes", style = list(color = 'white')),
+                     labels = list(style = list(color = 'white')))
   })
   
   output$text <- renderText({
