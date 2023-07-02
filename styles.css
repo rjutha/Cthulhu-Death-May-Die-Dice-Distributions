@@ -1,0 +1,13 @@
+/* Get a fancy font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap');
+
+/* Change header text to imported font */
+h2 {
+  font-family: 'Yusei Magic', sans-serif;
+}
+
+h3 {
+  font-family: 'Yusei Magic', sans-serif;
+  color: green;
+  font-size: 300%;
+}

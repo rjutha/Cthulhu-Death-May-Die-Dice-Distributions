@@ -11,6 +11,7 @@ source("cthulhu dice.R")
 ui <- fluidPage(
     theme = shinytheme("darkly"),
     # Application title
+    includeCSS("styles.css"),
     titlePanel("Cthulhu Death May Die Dice Distribution"),
 
     # Sidebar with a slider input for number of bins 
@@ -52,7 +53,7 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
           highchartOutput("hc_plot"),
-          span(textOutput("text"), style="color:red")
+          h3(textOutput("text"))
         )
     )
 )
