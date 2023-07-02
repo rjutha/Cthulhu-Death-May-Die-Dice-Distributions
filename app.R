@@ -1,18 +1,10 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
 library(highcharter)
 library(tidyverse)
 library(scales)
 library(bslib)
 library(shinythemes)
+
 source("cthulhu dice.R")
 
 # Define UI for application that draws a histogram
@@ -25,32 +17,32 @@ ui <- fluidPage(
     sidebarLayout(
         sidebarPanel(
           selectInput(inputId = "rolls",
-                         label = "Number of Simulated Rolls",
+                         label = "Number of Simulated Rolls.",
                          choices = c("100" = 100,
                                      "1,000" = 1000,
                                      "10,000" = 10000,
                                      "100,000" = 100000),
                          selected = 10000),
             selectInput(inputId = "black",
-                        label = "Number of black dice to roll",
+                        label = "Number of black dice to roll.",
                         choices = c(0:9),
                         selected = 3),
             selectInput(inputId = "green",
-                        label = "Number of green dice to roll",
+                        label = "Number of green dice to roll.",
                         choices = c(0:9),
                         selected = 0),
-          radioButtons("var", "Probability or Frequency?",
-                       c("probability" = "percent",
-                         "frequency" = "count")),
-          sliderInput("success", "Number of Successes",
+          radioButtons("var", "Y-Axis Display:",
+                       c("Likelihood" = "percent",
+                         "Frequency" = "count")),
+          sliderInput("success", "Filter number of Successes.",
                       min = 0, 
                       max = 9,
                       value = c(0,9)),
-          sliderInput("stars", "Number of Stars",
+          sliderInput("stars", "Filter number of Stars.",
                       min = 0, 
                       max = 9,
                       value = c(0,9)),
-          sliderInput("tentacles", "Number of Tentacles",
+          sliderInput("tentacles", "Filter number of Tentacles.",
                       min = 0, 
                       max = 9,
                       value = c(0,9))
@@ -60,7 +52,7 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
           highchartOutput("hc_plot"),
-          textOutput("text")
+          span(textOutput("text"), style="color:red")
         )
     )
 )
@@ -104,15 +96,15 @@ rerun_data <- reactive({
            hcaes(x = (1:length(dist)), y = !!as.symbol(input$var)),
             color = "#478A54",
            tooltip = list(
-             pointFormat = 
-             "Number of Success: {point.success}<br>
-             Number of Stars: {point.star}<br>
-             Number of Tentacles: {point.tentacle}<br>
-             Prob = {point.percent_label}")) %>%
+             pointFormat = paste0(
+               "Successes: {point.success}<br>",
+               "Stars: {point.star}<br>",
+               "Tentacles: {point.tentacle}<br>",
+               "Probability of event: {point.percent_label}"))) %>%
       hc_plotOptions(
         column = list(
           pointPadding = 0,
-          borderWidth = 0,
+          borderWidth = .5,
           groupPadding = 0,
           shadow = FALSE
           #,crisp = FALSE # Come back to fix this
@@ -123,7 +115,7 @@ rerun_data <- reactive({
         labels = list(format = ifelse(input$var == 'percent', "{value}%", "{value}"),
                       style = list(color = 'white'))) %>%
       hc_xAxis(
-        title = list(text = "Roll Outcomes", style = list(color = 'white')),
+        title = list(text = "Rank of Event Likelihood", style = list(color = 'white')),
                      labels = list(style = list(color = 'white')))
   })
   
