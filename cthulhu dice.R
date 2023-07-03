@@ -131,3 +131,23 @@ roll_n <- function(n, black, green){
 #        )
 # 
 #        
+
+print_range <- function(low, high, string){
+  if(low == high){
+    if(low == 1) string <- str_replace(string,"es$|s$", "")
+    return(paste("Exactly", low, string))
+  }
+  if (low < high && high == 9){
+    if(low == 1) string <- str_replace(string,"(?<!l)es$|s$", "")
+    return(paste("At least", low, string))
+  }
+  if(low < high){
+    return(paste("Between", low, "and", high, string))
+  }
+}
+
+# print_range(1,1,"Successes")
+# print_range(2,2,"Successes")
+# print_range(4,9, "Tentacles")
+# print_range(1,9, "Tentacles")
+# print_range(1,8,"Stars")

@@ -53,7 +53,8 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
           highchartOutput("hc_plot"),
-          h3(textOutput("text"))
+          h3(verbatimTextOutput("text")),
+          h3(textOutput("text2"))
         )
     )
 )
@@ -120,6 +121,8 @@ rerun_data <- reactive({
                      labels = list(style = list(color = 'white')))
   })
   
+  output$text2 <- renderText("yo \n yo")
+  
   output$text <- renderText({
     df <- rerun_data()
     
@@ -131,7 +134,12 @@ rerun_data <- reactive({
         between(tentacle, input$tentacles[1], input$tentacles[2]))
     
     paste0("The probabiilty of obtaining this set is ", 
-           filtered_df %>% pull() %>% sum() %>% percent(accuracy = 0.01, scale = 100))
+           filtered_df %>% pull() %>% sum() %>% percent(accuracy = 0.01, scale = 100),
+           "\n",
+           "This set contains:", "\n",
+           print_range(input$success[1], input$success[2], "Successes"), "\n",
+           print_range(input$stars[1], input$stars[2], "Stars"), "\n",
+           print_range(input$tentacles[1], input$tentacles[2], "Tentacles"))
   })
 }
 
