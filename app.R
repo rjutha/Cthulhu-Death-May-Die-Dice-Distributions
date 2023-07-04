@@ -33,18 +33,9 @@ ui <- fluidPage(
           radioButtons("var", "Y-Axis Display:",
                        c("Likelihood" = "percent",
                          "Frequency" = "count")),
-          sliderInput("success", "Filter number of Successes.",
-                      min = 0, 
-                      max = 3,
-                      value = c(0,3)),
-          sliderInput("stars", "Filter number of Stars.",
-                      min = 0, 
-                      max = 3,
-                      value = c(0,3)),
-          sliderInput("tentacles", "Filter number of Tentacles.",
-                      min = 0, 
-                      max = 3,
-                      value = c(0,3))
+          uiOutput("success"),
+          uiOutput("stars"),
+          uiOutput("tentacles"),
         ),
         
         mainPanel(
@@ -63,24 +54,24 @@ server <- function(input, output) {
     sum(black,green)
   })
   
-  observeEvent(input$black, {
-    updateSliderInput(inputId = "success", min = 0, max = value(), step = 1)
-    updateSliderInput(inputId = "success", value = c(0,value()))
-    updateSliderInput(inputId = "stars", min = 0, max = value(), step = 1)
-    updateSliderInput(inputId = "stars", value = c(0,value()))
-    updateSliderInput(inputId = "tentacles", min = 0, max = input$black, step = 1)
-    updateSliderInput(inputId = "tentacles", value = c(0,input$black))
+  output$success <- renderUI({
+    sliderInput("success", "Filter number of Successes.", min = 0, max = value(), value = c(0, value()), step = 1)
+  })
+  output$stars <- renderUI({
+    sliderInput("stars", "Filter number of Stars.", min = 0, max = value(), value = c(0, value()), step = 1)
+  })
+  output$tentacles <- renderUI({
+    sliderInput("tentacles", "Filter number of Tentacles.", min = 0, max = as.numeric(input$black), value = c(0, as.numeric(input$black)), step = 1)
   })
   
-  observeEvent(input$green, {
-    updateSliderInput(inputId = "success", min = 0, max = value(), step = 1)
-    updateSliderInput(inputId = "success", value = c(0,value()))
-    updateSliderInput(inputId = "stars", min = 0, max = value(), step = 1)
-    updateSliderInput(inputId = "stars", value = c(0,value()))
-  })
+  observe({
+    freezeReactiveValue(input, "success")
+    updateSliderInput(inputId = "success", min = 0, max = value(), value = c(0, value()))
+    updateSliderInput(inputId = "stars", min = 0, max = value(), value = c(0, value()))
+    updateSliderInput(inputId = "tentacles", min = 0, max = as.numeric(input$black), value = c(0, as.numeric(input$black)))
+  }, priority = 50)
   
   rerun_data <- reactive({
-  
       roll_n(as.numeric(input$rolls),input$black, input$green) %>%
       as_tibble() %>%
       select(-probability) %>%
@@ -117,7 +108,6 @@ server <- function(input, output) {
           borderWidth = .5,
           groupPadding = 0,
           shadow = FALSE
-          #,crisp = FALSE # Come back to fix this
          )
       ) %>%
       hc_yAxis(
@@ -146,7 +136,7 @@ server <- function(input, output) {
            "This set contains:", "</br>",
            print_range(input$success[1], input$success[2], "Successes", value()), "</br>",
            print_range(input$stars[1], input$stars[2], "Stars", value()), "</br>",
-           print_range(input$tentacles[1], input$tentacles[2], "Tentacles", value()))
+           print_range(input$tentacles[1], input$tentacles[2], "Tentacles", as.numeric(input$black)))
     )
   })
   
@@ -166,7 +156,7 @@ server <- function(input, output) {
            "This set contains:", "\n",
            print_range(input$success[1], input$success[2], "Successes", value()), "\n",
            print_range(input$stars[1], input$stars[2], "Stars", value()), "\n",
-           print_range(input$tentacles[1], input$tentacles[2], "Tentacles", value()))
+           print_range(input$tentacles[1], input$tentacles[2], "Tentacles", as.numeric(input$black)))
   })
 }
 
