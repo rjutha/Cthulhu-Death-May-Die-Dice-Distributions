@@ -39,12 +39,12 @@ ui <- fluidPage(
                       value = c(0,3)),
           sliderInput("stars", "Filter number of Stars.",
                       min = 0, 
-                      max = 9,
-                      value = c(0,9)),
+                      max = 3,
+                      value = c(0,3)),
           sliderInput("tentacles", "Filter number of Tentacles.",
                       min = 0, 
-                      max = 9,
-                      value = c(0,9))
+                      max = 3,
+                      value = c(0,3))
         ),
         
         mainPanel(
@@ -57,12 +57,27 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   
-  observeEvent(input$black, {
-    updateSliderInput(inputId = "success", min = 0, max = input$black)
-    updateSliderInput(inputId = "success", value = c(0,input$black))
+  value <- reactive({
+    black <- as.numeric(input$black)
+    green <- as.numeric(input$green)
+    sum(black,green)
   })
   
+  observeEvent(input$black, {
+    updateSliderInput(inputId = "success", min = 0, max = value(), step = 1)
+    updateSliderInput(inputId = "success", value = c(0,value()))
+    updateSliderInput(inputId = "stars", min = 0, max = value(), step = 1)
+    updateSliderInput(inputId = "stars", value = c(0,value()))
+    updateSliderInput(inputId = "tentacles", min = 0, max = input$black, step = 1)
+    updateSliderInput(inputId = "tentacles", value = c(0,input$black))
+  })
   
+  observeEvent(input$green, {
+    updateSliderInput(inputId = "success", min = 0, max = value(), step = 1)
+    updateSliderInput(inputId = "success", value = c(0,value()))
+    updateSliderInput(inputId = "stars", min = 0, max = value(), step = 1)
+    updateSliderInput(inputId = "stars", value = c(0,value()))
+  })
   
   rerun_data <- reactive({
   
@@ -75,7 +90,7 @@ server <- function(input, output) {
       arrange(-count) %>%
       mutate(dist = count / as.numeric(input$rolls))
   })
-
+  
   output$hc_plot <- renderHighchart({
     df <- rerun_data()
     
@@ -88,7 +103,7 @@ server <- function(input, output) {
         percent = dist * 100,
         percent_label = percent(dist, accuracy = 0.01, scale = 100)) %>%
       hchart("column",
-           hcaes(x = (1:length(dist)), y = !!as.symbol(input$var)),
+           hcaes(x = (1:length(!!as.symbol(input$var))), y = !!as.symbol(input$var)),
             color = "#478A54",
            tooltip = list(
              pointFormat = paste0(
@@ -129,9 +144,9 @@ server <- function(input, output) {
            filtered_df %>% pull() %>% sum() %>% percent(accuracy = 0.01, scale = 100),
            "</br>",
            "This set contains:", "</br>",
-           print_range(input$success[1], input$success[2], "Successes"), "</br>",
-           print_range(input$stars[1], input$stars[2], "Stars"), "</br>",
-           print_range(input$tentacles[1], input$tentacles[2], "Tentacles"))
+           print_range(input$success[1], input$success[2], "Successes", value()), "</br>",
+           print_range(input$stars[1], input$stars[2], "Stars", value()), "</br>",
+           print_range(input$tentacles[1], input$tentacles[2], "Tentacles", value()))
     )
   })
   
@@ -149,9 +164,9 @@ server <- function(input, output) {
            filtered_df %>% pull() %>% sum() %>% percent(accuracy = 0.01, scale = 100),
            "\n",
            "This set contains:", "\n",
-           print_range(input$success[1], input$success[2], "Successes"), "\n",
-           print_range(input$stars[1], input$stars[2], "Stars"), "\n",
-           print_range(input$tentacles[1], input$tentacles[2], "Tentacles"))
+           print_range(input$success[1], input$success[2], "Successes", value()), "\n",
+           print_range(input$stars[1], input$stars[2], "Stars", value()), "\n",
+           print_range(input$tentacles[1], input$tentacles[2], "Tentacles", value()))
   })
 }
 

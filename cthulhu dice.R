@@ -132,12 +132,15 @@ roll_n <- function(n, black, green){
 # 
 #        
 
-print_range <- function(low, high, string){
+print_range <- function(low, high, string, max){
   if(low == high){
     if(low == 1) string <- str_replace(string,"(?<!l)es$|s$", "")
     return(paste("Exactly", low, string))
   }
-  if (low < high && high == 9){
+  if(low < high && high == max && low == 0){
+    return(paste("Any number of", string))
+  }
+  if (low < high && high == max && low != 0){
     if(low == 1) string <- str_replace(string,"(?<!l)es$|s$", "")
     return(paste("At least", low, string))
   }
