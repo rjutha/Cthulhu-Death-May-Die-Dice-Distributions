@@ -35,8 +35,8 @@ ui <- fluidPage(
                          "Frequency" = "count")),
           sliderInput("success", "Filter number of Successes.",
                       min = 0, 
-                      max = 9,
-                      value = c(0,9)),
+                      max = 3,
+                      value = c(0,3)),
           sliderInput("stars", "Filter number of Stars.",
                       min = 0, 
                       max = 9,
@@ -56,6 +56,13 @@ ui <- fluidPage(
 )
 
 server <- function(input, output) {
+  
+  observeEvent(input$black, {
+    updateSliderInput(inputId = "success", min = 0, max = input$black)
+    updateSliderInput(inputId = "success", value = c(0,input$black))
+  })
+  
+  
   
   rerun_data <- reactive({
   
