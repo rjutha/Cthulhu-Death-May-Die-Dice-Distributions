@@ -134,7 +134,7 @@ roll_n <- function(n, black, green){
 
 print_range <- function(low, high, string){
   if(low == high){
-    if(low == 1) string <- str_replace(string,"es$|s$", "")
+    if(low == 1) string <- str_replace(string,"(?<!l)es$|s$", "")
     return(paste("Exactly", low, string))
   }
   if (low < high && high == 9){

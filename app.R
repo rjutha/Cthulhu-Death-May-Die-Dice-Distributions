@@ -7,14 +7,12 @@ library(shinythemes)
 
 source("cthulhu dice.R")
 
-# Define UI for application that draws a histogram
 ui <- fluidPage(
     theme = shinytheme("darkly"),
     # Application title
     includeCSS("styles.css"),
     titlePanel("Cthulhu Death May Die Dice Distribution"),
 
-    # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
           selectInput(inputId = "rolls",
@@ -49,23 +47,17 @@ ui <- fluidPage(
                       value = c(0,9))
         ),
         
-
-        # Show a plot of the generated distribution
         mainPanel(
           highchartOutput("hc_plot"),
           h3(verbatimTextOutput("text")),
-          h3(textOutput("text2")),
-          h3(htmlOutput("text3"))
+          h3(htmlOutput("text2"))
         )
     )
 )
 
-# Define server logic required to draw a histogram
 server <- function(input, output) {
   
-  
-
-rerun_data <- reactive({
+  rerun_data <- reactive({
   
       roll_n(as.numeric(input$rolls),input$black, input$green) %>%
       as_tibble() %>%
@@ -76,13 +68,6 @@ rerun_data <- reactive({
       arrange(-count) %>%
       mutate(dist = count / as.numeric(input$rolls))
   })
-
-  # output$distPlot <- renderPlot({
-  #    df <- rerun_data()
-  #       # generate bins based on input$bins from ui.R
-  #       # draw the histogram with the specified number of bins
-  #       print(plot(x = df$dist))
-  #   })
 
   output$hc_plot <- renderHighchart({
     df <- rerun_data()
@@ -122,9 +107,26 @@ rerun_data <- reactive({
                      labels = list(style = list(color = 'white')))
   })
   
-  output$text2 <- renderText("yo \n yo")
-  
-  output$text3 <- renderUI(HTML("WOAH</br>WOAH"))
+  output$text2 <- renderUI({
+    df <- rerun_data()
+    
+    filtered_df <- 
+      df %>%
+      filter(
+        between(success, input$success[1], input$success[2]),
+        between(star, input$stars[1], input$stars[2]),
+        between(tentacle, input$tentacles[1], input$tentacles[2]))
+    
+    HTML(
+      paste0("The probabiilty of obtaining this set is ", 
+           filtered_df %>% pull() %>% sum() %>% percent(accuracy = 0.01, scale = 100),
+           "</br>",
+           "This set contains:", "</br>",
+           print_range(input$success[1], input$success[2], "Successes"), "</br>",
+           print_range(input$stars[1], input$stars[2], "Stars"), "</br>",
+           print_range(input$tentacles[1], input$tentacles[2], "Tentacles"))
+    )
+  })
   
   output$text <- renderText({
     df <- rerun_data()
