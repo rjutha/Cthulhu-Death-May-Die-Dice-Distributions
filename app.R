@@ -54,7 +54,8 @@ ui <- fluidPage(
         mainPanel(
           highchartOutput("hc_plot"),
           h3(verbatimTextOutput("text")),
-          h3(textOutput("text2"))
+          h3(textOutput("text2")),
+          h3(htmlOutput("text3"))
         )
     )
 )
@@ -122,6 +123,8 @@ rerun_data <- reactive({
   })
   
   output$text2 <- renderText("yo \n yo")
+  
+  output$text3 <- renderUI(HTML("WOAH</br>WOAH"))
   
   output$text <- renderText({
     df <- rerun_data()
