@@ -1,19 +1,15 @@
 /* Get a fancy font from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600&display=swap');
 
 /* Change header text to imported font */
 h2 {
-  font-family: 'Yusei Magic', sans-serif;
-}
-
-h3 {
-  font-family: 'Yusei Magic', sans-serif;
-  color: white;
-  font-size: 100%;
+  font-family: 'Cinzel', sans-serif;
+  font-size: 350%;
 }
 
 .shiny-output-error-validation {
-  font-size: 150%;
-  color: yellowgreen;
-  font-family: 'Yusei Magic';
+  font-size: 225%;
+  color: white;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bold;
 }

@@ -2,7 +2,6 @@ library(shiny)
 library(highcharter)
 library(tidyverse)
 library(scales)
-library(bslib)
 library(shinythemes)
 
 source("cthulhu dice.R")
@@ -72,7 +71,6 @@ server <- function(input, output) {
   rerun_data <- reactive({
       roll_n(as.numeric(input$rolls),input$black, input$green) %>%
       as_tibble() %>%
-      select(-probability) %>%
       group_by_all() %>%
       count(name = "count") %>%
       ungroup() %>%
@@ -141,5 +139,4 @@ server <- function(input, output) {
   })
 }
 
-# Run the application 
 shinyApp(ui = ui, server = server)

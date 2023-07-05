@@ -5,7 +5,7 @@ library(tidyverse)
 # 1 Blank
 # 2 ! (success)
 # 1 tentacle
-# 1 star + tentacle
+# 1 star
 # 1 tentacle + ! (sucess)
 
 # Green Die
@@ -14,45 +14,32 @@ library(tidyverse)
   # 1 star
   # 1 star + ! (success)
 
-roll_dice <- function(black, green, message = TRUE){
+roll_dice <- function(black, green){
   success <- 0
   star <- 0
   tentacle <- 0
-  probability <- 1
   
   if(black > 0){
     for(i in 1:black){
       roll <- sample(1:6, 1)
       # Blank
-      if(roll == 1){
-        if (message) print("Blank")
-        probability = probability * (1/6)
-      }
+      #if(roll == 1) do nothing
       # Success
-      else if(roll %in% c(2,3)){
+      if(roll %in% c(2,3)){
         success = success + 1
-        probability = probability * (2/6)
-        if (message) print("Success")
       }
       # Tentacle
       else if(roll == 4){
         tentacle = tentacle + 1
-        probability = probability * (1/6)
-        if (message) print("Tentacle")
       }
-      # Star + Tentacle
+      # Star
       else if(roll == 5){
         star = star + 1
-        tentacle = tentacle + 1
-        probability = probability * (1/6)
-        if (message) print("Star + Tentacle")
       }
       # Success + Tentacle
       else if(roll == 6){
         success = success + 1
         tentacle = tentacle + 1
-        probability = probability * (1/6)
-        if (message) print("Success + Tentacle")
       }
     }
   }
@@ -61,28 +48,19 @@ roll_dice <- function(black, green, message = TRUE){
     for(i in 1:green){
       roll <- sample(1:6, 1)
       # Blanks
-      if(roll %in% c(1,2)){
-        if (message) print("Blank")
-        probability = probability * (2/6)
-      }
+      #if(roll %in% c(1,2)) do nothing
       # Success
-      else if(roll %in% c(3,4)){
-        if (message) print("Success")
+      if(roll %in% c(3,4)){
         success = success + 1
-        probability = probability * (2/6)
       }
       # Star
       else if(roll == 5){
-        if (message) print("Star")
         star = star + 1
-        probability = probability * (1/6)
       }
       # Star + Success
       else if(roll == 6){
-        if (message) print("Success + Star")
         success = success + 1
         star = star + 1
-        probability = probability * (1/6)
       }
     }
   }
@@ -91,48 +69,21 @@ roll_dice <- function(black, green, message = TRUE){
     c(
       success = success,
       star = star,
-      tentacle = tentacle,
-      probability = probability
+      tentacle = tentacle
     )
   )
 }
 
-#roll_dice(3,0)
+roll_dice(3,0)
 
 roll_n <- function(n, black, green){
-  df <- matrix(nrow = n, ncol = 4, dimnames = list(c(), c("success", "star", "tentacle", "probability")))
+  df <- matrix(nrow = n, ncol = 3, dimnames = list(c(), c("success", "star", "tentacle")))
   for(i in 1:n){
-    temp <- roll_dice(black, green, message = FALSE)
+    temp <- roll_dice(black, green)
     df[i,] <- temp
   }
   return(df)
 }
-
-# n = 10000
-# data <- roll_n(n,3,0) %>%
-#   as_tibble() %>%
-#   select(-probability) %>%
-#   group_by_all() %>%
-#   count(name = "count") %>%
-#   ungroup() %>%
-#   arrange(-count) %>%
-#   mutate(dist = count / n)
-# 
-# data <- data %>% filter(
-#   between(success, 3, 3),
-#   between(star, 3,3),
-#   between(tentacle, 0, 3))
-# hchart(data,
-#        "column",
-#        hcaes(x = 1:nrow(data), y = data$dist)) %>%
-#   hc_plotOptions(
-#     column = list(
-#       pointPadding = 0,
-#       borderWidth = 0,
-#       groupPadding = 0,
-#       shadow = FALSE
-#          )
-#        )
 
 print_range <- function(low, high, string, max){
   if(low == high){
@@ -150,9 +101,3 @@ print_range <- function(low, high, string, max){
     return(paste("Between", low, "and", high, string))
   }
 }
-
-# print_range(1,1,"Successes")
-# print_range(2,2,"Successes")
-# print_range(4,9, "Tentacles")
-# print_range(1,9, "Tentacles")
-# print_range(1,8,"Stars")

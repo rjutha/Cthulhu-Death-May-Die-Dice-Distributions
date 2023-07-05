@@ -5,10 +5,10 @@ account: sway
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 9375915
-bundleId: 7419935
+bundleId: 7421169
 url: https://sway.shinyapps.io/Cthulhu-Death-May-Die-Dice-Distributions/
-when: 1688506343.2707
-lastSyncTime: 1688506343.27071
+when: 1688540153.48752
+lastSyncTime: 1688540153.48753
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: .gitattributes|app - Copy.R|brainstorm.txt|README.md
+ignoredFiles: .gitattributes|brainstorm.txt|README.md
