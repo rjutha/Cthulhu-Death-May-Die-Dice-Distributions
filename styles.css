@@ -11,3 +11,9 @@ h3 {
   color: white;
   font-size: 100%;
 }
+
+.shiny-output-error-validation {
+  font-size: 150%;
+  color: yellowgreen;
+  font-family: 'Yusei Magic';
+}

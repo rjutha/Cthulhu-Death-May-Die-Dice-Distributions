@@ -118,6 +118,10 @@ roll_n <- function(n, black, green){
 #   arrange(-count) %>%
 #   mutate(dist = count / n)
 # 
+# data <- data %>% filter(
+#   between(success, 3, 3),
+#   between(star, 3,3),
+#   between(tentacle, 0, 3))
 # hchart(data,
 #        "column",
 #        hcaes(x = 1:nrow(data), y = data$dist)) %>%
@@ -129,8 +133,6 @@ roll_n <- function(n, black, green){
 #       shadow = FALSE
 #          )
 #        )
-# 
-#        
 
 print_range <- function(low, high, string, max){
   if(low == high){

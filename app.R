@@ -9,9 +9,8 @@ source("cthulhu dice.R")
 
 ui <- fluidPage(
     theme = shinytheme("darkly"),
-    # Application title
     includeCSS("styles.css"),
-    titlePanel("Cthulhu Death May Die Dice Distribution"),
+    titlePanel("Cthulhu Death May Die: Dice Distribution Visualizer"),
 
     sidebarLayout(
         sidebarPanel(
@@ -40,8 +39,7 @@ ui <- fluidPage(
         
         mainPanel(
           highchartOutput("hc_plot"),
-          h3(verbatimTextOutput("text")),
-          h3(htmlOutput("text2"))
+          h3(verbatimTextOutput("text"))
         )
     )
 )
@@ -85,15 +83,19 @@ server <- function(input, output) {
   output$hc_plot <- renderHighchart({
     df <- rerun_data()
     
-    df %>%
+    df <- df %>%
       filter(
         between(success, input$success[1], input$success[2]),
         between(star, input$stars[1], input$stars[2]),
         between(tentacle, input$tentacles[1], input$tentacles[2])) %>%
       mutate(
         percent = dist * 100,
-        percent_label = percent(dist, accuracy = 0.01, scale = 100)) %>%
-      hchart("column",
+        percent_label = percent(dist, accuracy = 0.01, scale = 100))
+    
+    validate(
+      need(nrow(df) != 0, "This set of filters results in an impossible outcome."))
+    
+      hchart(df, "column",
            hcaes(x = (1:length(!!as.symbol(input$var))), y = !!as.symbol(input$var)),
             color = "#478A54",
            tooltip = list(
@@ -117,27 +119,6 @@ server <- function(input, output) {
       hc_xAxis(
         title = list(text = "Rank of Event Likelihood", style = list(color = 'white')),
                      labels = list(style = list(color = 'white')))
-  })
-  
-  output$text2 <- renderUI({
-    df <- rerun_data()
-    
-    filtered_df <- 
-      df %>%
-      filter(
-        between(success, input$success[1], input$success[2]),
-        between(star, input$stars[1], input$stars[2]),
-        between(tentacle, input$tentacles[1], input$tentacles[2]))
-    
-    HTML(
-      paste0("The probabiilty of obtaining this set is ", 
-           filtered_df %>% pull() %>% sum() %>% percent(accuracy = 0.01, scale = 100),
-           "</br>",
-           "This set contains:", "</br>",
-           print_range(input$success[1], input$success[2], "Successes", value()), "</br>",
-           print_range(input$stars[1], input$stars[2], "Stars", value()), "</br>",
-           print_range(input$tentacles[1], input$tentacles[2], "Tentacles", as.numeric(input$black)))
-    )
   })
   
   output$text <- renderText({
