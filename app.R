@@ -55,7 +55,7 @@ server <- function(input, output) {
     sliderInput("success", "Filter number of Successes.", min = 0, max = value(), value = c(0, value()), step = 1)
   })
   output$stars <- renderUI({
-    sliderInput("stars", "Filter number of Stars.", min = 0, max = value(), value = c(0, value()), step = 1)
+    sliderInput("stars", "Filter number of Elder Signs.", min = 0, max = value(), value = c(0, value()), step = 1)
   })
   output$tentacles <- renderUI({
     sliderInput("tentacles", "Filter number of Tentacles.", min = 0, max = as.numeric(input$black), value = c(0, as.numeric(input$black)), step = 1)
@@ -99,7 +99,7 @@ server <- function(input, output) {
            tooltip = list(
              pointFormat = paste0(
                "Successes: {point.success}<br>",
-               "Stars: {point.star}<br>",
+               "Elder Signs: {point.star}<br>",
                "Tentacles: {point.tentacle}<br>",
                "Probability of event: {point.percent_label}"))) %>%
       hc_plotOptions(
@@ -134,7 +134,7 @@ server <- function(input, output) {
            "\n",
            "This set contains:", "\n",
            print_range(input$success[1], input$success[2], "Successes", value()), "\n",
-           print_range(input$stars[1], input$stars[2], "Stars", value()), "\n",
+           print_range(input$stars[1], input$stars[2], "Elder Signs", value()), "\n",
            print_range(input$tentacles[1], input$tentacles[2], "Tentacles", as.numeric(input$black)))
   })
 }
