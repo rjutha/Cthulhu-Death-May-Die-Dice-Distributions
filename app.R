@@ -14,18 +14,18 @@ ui <- fluidPage(
     sidebarLayout(
         sidebarPanel(
           selectInput(inputId = "rolls",
-                         label = "Number of Simulated Rolls.",
+                         label = "Choose the number of simulated rolls.",
                          choices = c("100" = 100,
                                      "1,000" = 1000,
                                      "10,000" = 10000,
                                      "100,000" = 100000),
                          selected = 10000),
             selectInput(inputId = "black",
-                        label = "Number of black dice to roll.",
+                        label = "Choose the number of black dice to roll.",
                         choices = c(0:9),
                         selected = 3),
             selectInput(inputId = "green",
-                        label = "Number of green dice to roll.",
+                        label = "Choose the number of green dice to roll.",
                         choices = c(0:9),
                         selected = 0),
           radioButtons("var", "Y-Axis Display:",
@@ -52,13 +52,13 @@ server <- function(input, output) {
   })
   
   output$success <- renderUI({
-    sliderInput("success", "Filter number of Successes.", min = 0, max = value(), value = c(0, value()), step = 1)
+    sliderInput("success", "Choose the number of Successes you want to roll.", min = 0, max = value(), value = c(0, value()), step = 1)
   })
   output$stars <- renderUI({
-    sliderInput("stars", "Filter number of Elder Signs.", min = 0, max = value(), value = c(0, value()), step = 1)
+    sliderInput("stars", "Choose the number of Elder Signs you want to roll.", min = 0, max = value(), value = c(0, value()), step = 1)
   })
   output$tentacles <- renderUI({
-    sliderInput("tentacles", "Filter number of Tentacles.", min = 0, max = as.numeric(input$black), value = c(0, as.numeric(input$black)), step = 1)
+    sliderInput("tentacles", "Choose the number of Tentacles you want to roll.", min = 0, max = as.numeric(input$black), value = c(0, as.numeric(input$black)), step = 1)
   })
   
   observe({
@@ -101,7 +101,7 @@ server <- function(input, output) {
                "Successes: {point.success}<br>",
                "Elder Signs: {point.star}<br>",
                "Tentacles: {point.tentacle}<br>",
-               "Probability of event: {point.percent_label}"))) %>%
+               "Aproximate probability of event: {point.percent_label}"))) %>%
       hc_plotOptions(
         column = list(
           pointPadding = 0,
@@ -129,7 +129,7 @@ server <- function(input, output) {
         between(star, input$stars[1], input$stars[2]),
         between(tentacle, input$tentacles[1], input$tentacles[2]))
     
-    paste0("The probabiilty of obtaining this set is ", 
+    paste0("The probabiilty of obtaining this set is aproximately ", 
            filtered_df %>% pull() %>% sum() %>% percent(accuracy = 0.01, scale = 100),
            "\n",
            "This set contains:", "\n",
