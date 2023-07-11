@@ -129,7 +129,7 @@ server <- function(input, output) {
         between(star, input$stars[1], input$stars[2]),
         between(tentacle, input$tentacles[1], input$tentacles[2]))
     
-    paste0("The probabiilty of obtaining this set is aproximately ", 
+    paste0("The chance of this event is aproximately ", 
            filtered_df %>% pull() %>% sum() %>% percent(accuracy = 0.01, scale = 100),
            "\n",
            "This set contains:", "\n",
