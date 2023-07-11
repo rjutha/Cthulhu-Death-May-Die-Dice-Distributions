@@ -1,6 +1,7 @@
+# This script defines functions to simulate rolling the dice pertaining to the table-top game Cthulhu: Death May Die.
 library(tidyverse)
-# https://datascienceplus.com/strategies-to-speedup-r-code/
 
+# Below is a summary of the outcomese on each of the dice
 # Black Die
 # 1 Blank
 # 2 ! (success)
@@ -14,11 +15,15 @@ library(tidyverse)
   # 1 star
   # 1 star + ! (success)
 
+# This function contains the logic to roll the from the game with the correct probabilities.
+# The inputs control the amount of black and green dice that should be used for the roll.
+# The function returns a named vector containing the tally of each outcome for all the rolls.
 roll_dice <- function(black, green){
-  success <- 0
-  star <- 0
-  tentacle <- 0
+    success <- 0
+    star <- 0
+    tentacle <- 0
   
+  # Roll Black Dice
   if(black > 0){
     for(i in 1:black){
       roll <- sample(1:6, 1)
@@ -44,6 +49,7 @@ roll_dice <- function(black, green){
     }
   }
   
+  # Roll Green Dice
   if(green > 0 ){
     for(i in 1:green){
       roll <- sample(1:6, 1)
@@ -65,17 +71,14 @@ roll_dice <- function(black, green){
     }
   }
   
-  return(
-    c(
-      success = success,
-      star = star,
-      tentacle = tentacle
-    )
+  return(c(
+    success = success,
+    star = star,
+    tentacle = tentacle)
   )
 }
 
-roll_dice(3,0)
-
+# This function calls the roll_dice() function n number of times and stores all the outcomes in a matrix
 roll_n <- function(n, black, green){
   df <- matrix(nrow = n, ncol = 3, dimnames = list(c(), c("success", "star", "tentacle")))
   for(i in 1:n){
@@ -85,6 +88,7 @@ roll_n <- function(n, black, green){
   return(df)
 }
 
+# This short function is for printing probability of each outcome dynamically based on input from the shiny app.
 print_range <- function(low, high, string, max){
   if(low == high){
     if(low == 1) string <- str_replace(string,"(?<!l)es$|s$", "")
